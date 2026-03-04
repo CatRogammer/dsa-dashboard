@@ -1,0 +1,2535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary: #00cec9;
+            --accent: #fd79a8;
+            --dark: #2d3436;
+            --darker: #1e272e;
+            --light: #dfe6e9;
+            --white: #ffffff;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #e17055;
+            --bg: #0a0a1a;
+            --card-bg: #141428;
+            --sidebar-bg: #0f0f23;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--light);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid rgba(108, 92, 231, 0.2);
+            padding: 20px 0;
+            overflow-y: auto;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 10px 20px 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(108, 92, 231, 0.2);
+            margin-bottom: 15px;
+        }
+
+        .sidebar-header h1 {
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            color: #636e72;
+            margin-top: 5px;
+        }
+
+        .nav-section {
+            margin-bottom: 10px;
+        }
+
+        .nav-section-title {
+            padding: 8px 20px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--primary-light);
+            letter-spacing: 1.5px;
+            font-weight: 700;
+        }
+
+        .nav-item {
+            padding: 10px 20px 10px 35px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            color: #b2bec3;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--white);
+        }
+
+        .nav-item.active {
+            background: rgba(108, 92, 231, 0.15);
+            color: var(--primary-light);
+            border-right: 3px solid var(--primary);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            color: var(--white);
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(108, 92, 231, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 18px;
+            color: var(--white);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #5f3dc4);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(108, 92, 231, 0.15);
+            color: var(--primary-light);
+            border: 1px solid rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(108, 92, 231, 0.25);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00a884);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #d63031);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #e17055);
+            color: var(--dark);
+        }
+
+        input, select {
+            padding: 10px 15px;
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--light);
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        input::placeholder {
+            color: #636e72;
+        }
+
+        /* Visualization Area */
+        .viz-area {
+            min-height: 120px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 4px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .viz-area.center-items {
+            align-items: center;
+        }
+
+        /* Array bars */
+        .bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .bar-visual {
+            width: 35px;
+            background: linear-gradient(180deg, var(--primary), var(--primary-light));
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .bar-label {
+            font-size: 11px;
+            color: #b2bec3;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .bar.comparing .bar-visual {
+            background: linear-gradient(180deg, var(--warning), #e17055) !important;
+        }
+
+        .bar.sorted .bar-visual {
+            background: linear-gradient(180deg, var(--success), #00a884) !important;
+        }
+
+        .bar.found .bar-visual {
+            background: linear-gradient(180deg, var(--accent), #e84393) !important;
+        }
+
+        .bar.active .bar-visual {
+            background: linear-gradient(180deg, var(--secondary), #0984e3) !important;
+        }
+
+        /* Stack visualization */
+        .stack-container {
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            min-height: 300px;
+            justify-content: flex-start;
+            gap: 4px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .stack-item {
+            width: 200px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: white;
+            animation: stackPush 0.4s ease;
+            position: relative;
+        }
+
+        .stack-item:last-child {
+            background: linear-gradient(135deg, var(--accent), #e84393);
+        }
+
+        .stack-item:last-child::after {
+            content: '← TOP';
+            position: absolute;
+            right: -55px;
+            font-size: 11px;
+            color: var(--accent);
+        }
+
+        .stack-base {
+            width: 220px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        @keyframes stackPush {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Linked List */
+        .ll-container {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            padding: 20px;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+
+        .ll-node {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            animation: nodeAppear 0.4s ease;
+        }
+
+        .ll-node-box {
+            display: flex;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--card-bg);
+        }
+
+        .ll-node-data {
+            padding: 12px 18px;
+            font-weight: 700;
+            color: var(--white);
+            background: rgba(108, 92, 231, 0.15);
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .ll-node-ptr {
+            padding: 12px 10px;
+            border-left: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            font-size: 10px;
+            color: var(--primary-light);
+        }
+
+        .ll-arrow {
+            width: 30px;
+            height: 2px;
+            background: var(--primary);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .ll-arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            border: 5px solid transparent;
+            border-left: 8px solid var(--primary);
+        }
+
+        .ll-null {
+            padding: 8px 12px;
+            color: var(--danger);
+            font-weight: 700;
+            font-size: 12px;
+            border: 2px dashed var(--danger);
+            border-radius: 6px;
+        }
+
+        .ll-head-label {
+            position: absolute;
+            top: 5px;
+            left: 20px;
+            font-size: 11px;
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .ll-node.highlight .ll-node-box {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(253, 121, 168, 0.3);
+        }
+
+        .ll-node.highlight .ll-node-data {
+            background: rgba(253, 121, 168, 0.2);
+        }
+
+        @keyframes nodeAppear {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Doubly Linked List */
+        .dll-node-box {
+            display: flex;
+            border: 2px solid var(--secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--card-bg);
+        }
+
+        .dll-node-prev {
+            padding: 12px 8px;
+            border-right: 2px solid var(--secondary);
+            font-size: 10px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+        }
+
+        .dll-node-data {
+            padding: 12px 18px;
+            font-weight: 700;
+            color: var(--white);
+            background: rgba(0, 206, 201, 0.15);
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .dll-node-next {
+            padding: 12px 8px;
+            border-left: 2px solid var(--secondary);
+            font-size: 10px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+        }
+
+        .dll-arrow {
+            width: 30px;
+            position: relative;
+            flex-shrink: 0;
+            height: 20px;
+        }
+
+        .dll-arrow-fwd {
+            position: absolute;
+            top: 4px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--secondary);
+        }
+
+        .dll-arrow-fwd::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            border: 5px solid transparent;
+            border-left: 8px solid var(--secondary);
+        }
+
+        .dll-arrow-bwd {
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-light);
+        }
+
+        .dll-arrow-bwd::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: -4px;
+            border: 5px solid transparent;
+            border-right: 8px solid var(--primary-light);
+        }
+
+        /* Queue */
+        .queue-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 20px;
+            justify-content: center;
+            position: relative;
+        }
+
+        .queue-item {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 8px;
+            font-weight: 700;
+            color: white;
+            min-width: 50px;
+            text-align: center;
+            animation: queueEnqueue 0.4s ease;
+        }
+
+        .queue-item:first-child {
+            background: linear-gradient(135deg, var(--success), #00a884);
+        }
+
+        .queue-item:last-child {
+            background: linear-gradient(135deg, var(--accent), #e84393);
+        }
+
+        .queue-label {
+            font-size: 11px;
+            color: var(--primary-light);
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .queue-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .queue-front-label, .queue-rear-label {
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .queue-front-label { color: var(--success); }
+        .queue-rear-label { color: var(--accent); }
+
+        @keyframes queueEnqueue {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Circular Queue */
+        .circular-queue-viz {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+        }
+
+        .cq-slot {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 3px solid rgba(108, 92, 231, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+            color: #636e72;
+        }
+
+        .cq-slot.filled {
+            border-color: var(--primary);
+            background: rgba(108, 92, 231, 0.2);
+            color: var(--white);
+        }
+
+        .cq-slot.front {
+            border-color: var(--success);
+            box-shadow: 0 0 12px rgba(0, 184, 148, 0.4);
+        }
+
+        .cq-slot.rear {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(253, 121, 168, 0.4);
+        }
+
+        .cq-index {
+            position: absolute;
+            font-size: 9px;
+            color: #636e72;
+        }
+
+        /* Hash Table */
+        .hash-table {
+            display: flex;
+            gap: 8px;
+            flex-direction: column;
+            padding: 15px;
+        }
+
+        .hash-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hash-index {
+            width: 40px;
+            height: 40px;
+            background: rgba(108, 92, 231, 0.2);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary-light);
+            flex-shrink: 0;
+        }
+
+        .hash-chain {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .hash-value {
+            padding: 8px 14px;
+            background: rgba(0, 206, 201, 0.15);
+            border: 2px solid var(--secondary);
+            border-radius: 6px;
+            font-weight: 600;
+            color: var(--white);
+            font-size: 13px;
+            animation: nodeAppear 0.3s ease;
+        }
+
+        .hash-arrow {
+            width: 20px;
+            height: 2px;
+            background: var(--secondary);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .hash-arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -3px;
+            border: 4px solid transparent;
+            border-left: 6px solid var(--secondary);
+        }
+
+        .hash-empty {
+            padding: 8px 14px;
+            border: 2px dashed rgba(99, 110, 114, 0.3);
+            border-radius: 6px;
+            color: #636e72;
+            font-size: 12px;
+        }
+
+        /* Status / Log */
+        .status-bar {
+            padding: 12px 18px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--primary-light);
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            min-height: 40px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(108, 92, 231, 0.1);
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+            color: var(--warning);
+        }
+
+        /* Section visibility */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Speed control */
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #b2bec3;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+            padding: 0;
+            border: none;
+            background: transparent;
+        }
+
+        /* Polish notation */
+        .expression-display {
+            font-size: 24px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            color: var(--white);
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        .expression-display .highlight-char {
+            color: var(--accent);
+            background: rgba(253, 121, 168, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Tabs for sub-sections */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            background: rgba(108, 92, 231, 0.1);
+            color: #b2bec3;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: rgba(108, 92, 231, 0.2);
+        }
+
+        .tab.active {
+            background: rgba(108, 92, 231, 0.2);
+            color: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        /* Info box */
+        .info-box {
+            padding: 15px 20px;
+            background: rgba(108, 92, 231, 0.08);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #b2bec3;
+        }
+
+        .info-box strong {
+            color: var(--primary-light);
+        }
+
+        /* Grid layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+            .sidebar .nav-item span,
+            .sidebar .nav-section-title,
+            .sidebar-header p {
+                display: none;
+            }
+            .sidebar-header h1 {
+                font-size: 14px;
+            }
+            .main-content {
+                margin-left: 60px;
+                padding: 15px;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Complexity badge */
+        .complexity {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .complexity.good { background: rgba(0, 184, 148, 0.15); color: var(--success); }
+        .complexity.avg { background: rgba(253, 203, 110, 0.15); color: var(--warning); }
+        .complexity.bad { background: rgba(225, 112, 85, 0.15); color: var(--danger); }
+
+        /* Open addressing hash table */
+        .oa-table {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .oa-slot {
+            width: 55px;
+            height: 55px;
+            border: 2px solid rgba(108, 92, 231, 0.3);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .oa-slot.filled {
+            border-color: var(--primary);
+            background: rgba(108, 92, 231, 0.15);
+        }
+
+        .oa-slot.probing {
+            border-color: var(--warning);
+            background: rgba(253, 203, 110, 0.15);
+        }
+
+        .oa-slot.inserted {
+            border-color: var(--success);
+            background: rgba(0, 184, 148, 0.15);
+        }
+
+        .oa-slot-index {
+            font-size: 9px;
+            color: #636e72;
+        }
+
+        .oa-slot-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        /* Smooth transitions */
+        .bar, .stack-item, .queue-item, .ll-node, .hash-value {
+            transition: all 0.3s ease;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+    <div class="sidebar-header">
+        <h1>📊 DSA Dashboard</h1>
+        <p>Data Structures & Algorithms</p>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-section-title">Searching</div>
+        <div class="nav-item active" onclick="showSection('linear-search')"><span>Linear Search</span></div>
+        <div class="nav-item" onclick="showSection('binary-search')"><span>Binary Search</span></div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-section-title">Sorting</div>
+        <div class="nav-item" onclick="showSection('bubble-sort')"><span>Bubble Sort</span></div>
+        <div class="nav-item" onclick="showSection('insertion-sort')"><span>Insertion Sort</span></div>
+        <div class="nav-item" onclick="showSection('selection-sort')"><span>Selection Sort</span></div>
+        <div class="nav-item" onclick="showSection('merge-sort')"><span>Merge Sort</span></div>
+        <div class="nav-item" onclick="showSection('quick-sort')"><span>Quick Sort</span></div>
+        <div class="nav-item" onclick="showSection('radix-sort')"><span>Radix Sort</span></div>
+        <div class="nav-item" onclick="showSection('counting-sort')"><span>Counting Sort</span></div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-section-title">Stack</div>
+        <div class="nav-item" onclick="showSection('stack-ops')"><span>Push / Pop</span></div>
+        <div class="nav-item" onclick="showSection('polish-notation')"><span>Polish Notation</span></div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-section-title">Linked List</div>
+        <div class="nav-item" onclick="showSection('singly-ll')"><span>Singly Linked List</span></div>
+        <div class="nav-item" onclick="showSection('doubly-ll')"><span>Doubly Linked List</span></div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-section-title">Queue</div>
+        <div class="nav-item" onclick="showSection('queue-ops')"><span>Linear Queue</span></div>
+        <div class="nav-item" onclick="showSection('circular-queue')"><span>Circular Queue</span></div>
+    </div>
+
+    <div class="nav-section">
+        <div class="nav-section-title">Hashing</div>
+        <div class="nav-item" onclick="showSection('hash-chaining')"><span>Chaining (Open)</span></div>
+        <div class="nav-item" onclick="showSection('hash-open-addr')"><span>Open Addressing (Closed)</span></div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main-content">
+
+    <!-- LINEAR SEARCH -->
+    <div class="section active" id="linear-search">
+        <div class="page-header">
+            <h2>🔍 Linear Search</h2>
+            <p>Sequentially checks each element until a match is found or the list ends.
+                <span class="complexity bad">O(n)</span>
+            </p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="LS.generate()">Generate Array</button>
+                <input type="number" id="ls-target" placeholder="Search value..." style="width:130px;">
+                <button class="btn btn-primary" onclick="LS.search()">🔍 Search</button>
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" min="50" max="800" value="300" id="ls-speed">
+                </div>
+            </div>
+            <div class="viz-area" id="ls-viz"></div>
+            <div class="status-bar" id="ls-status">Click "Generate Array" to start</div>
+        </div>
+    </div>
+
+    <!-- BINARY SEARCH -->
+    <div class="section" id="binary-search">
+        <div class="page-header">
+            <h2>🔍 Binary Search</h2>
+            <p>Searches a sorted array by repeatedly dividing the search interval in half.
+                <span class="complexity good">O(log n)</span>
+            </p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="BS.generate()">Generate Sorted Array</button>
+                <input type="number" id="bs-target" placeholder="Search value..." style="width:130px;">
+                <button class="btn btn-primary" onclick="BS.search()">🔍 Search</button>
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" min="50" max="800" value="400" id="bs-speed">
+                </div>
+            </div>
+            <div class="viz-area" id="bs-viz"></div>
+            <div class="status-bar" id="bs-status">Click "Generate Sorted Array" to start</div>
+        </div>
+    </div>
+
+    <!-- BUBBLE SORT -->
+    <div class="section" id="bubble-sort">
+        <div class="page-header">
+            <h2>🫧 Bubble Sort</h2>
+            <p>Repeatedly swaps adjacent elements if they are in the wrong order.
+                <span class="complexity bad">O(n²)</span>
+            </p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="BubbleSort.generate()">Generate Array</button>
+                <button class="btn btn-primary" onclick="BubbleSort.sort()">▶ Sort</button>
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" min="10" max="500" value="100" id="bubble-speed">
+                </div>
+            </div>
+            <div class="viz-area" id="bubble-viz"></div>
+            <div class="status-bar" id="bubble-status">Click "Generate Array" to start</div>
+        </div>
+    </div>
+
+    <!-- INSERTION SORT -->
+    <div class="section" id="insertion-sort">
+        <div class="page-header">
+            <h2>📥 Insertion Sort</h2>
+            <p>Builds the sorted array one item at a time by inserting each element into its correct position.
+                <span class="complexity bad">O(n²)</span>
+            </p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="InsertionSort.generate()">Generate Array</button>
+                <button class="btn btn-primary" onclick="InsertionSort.sort()">▶ Sort</button>
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" min="10" max="500" value="100" id="insertion-speed">
+                </div>
+            </div>
+            <div class="viz-area" id="insertion-viz"></div>
+            <div class="status-bar" id="insertion-status">Click "Generate Array" to start</div>
+        </div>
+    </div>
+
+    <!-- SELECTION SORT -->
+    <div class="section" id="selection-sort">
+        <div class="page-header">
+            <h2>☝ Selection Sort</h2>
+            <p>Selects the minimum element and places it at the beginning.
+                <span class="complexity bad">O(n²)</span>
+            </p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="SelectionSort.generate()">Generate Array</button>
+                <button class="btn btn-primary" onclick="SelectionSort.sort()">▶ Sort</button>
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" min="10" max="500" value="100" id="selection-speed">
+                </div>
+            </div>
+            <div class="viz-area" id="selection-viz"></div>
+            <div class="status-bar" id="selection-status">Click "Generate Array" to start</div>
+        </div>
+    </div>
+
+    <!-- MERGE SORT -->
+    <div class="section" id="merge-sort">
+        <div class="page-header">
+            <h2>🔀 Merge Sort</h2>
+            <p>Divides array into halves, sorts them, and merges back.
+                <span class="complexity good">O(n log n)</span>
+            </p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="MergeSort.generate()">Generate Array</button>
+                <button class="btn btn-primary" onclick="MergeSort.sort()">▶ Sort</button>
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" min="10" max="500" value="80" id="merge-speed">
+                </div>
+            </div>
+            <div class="viz-area" id="merge-viz"></div>
+            <div class="status-bar" id="merge-status">Click "Generate Array" to start</div>
+        </div>
+    </div>
+
+    <!-- QUICK SORT -->
+    <div class="section" id="quick-sort">
+        <div class="page-header">
+            <h2>⚡ Quick Sort</h2>
+            <p>Picks a pivot and partitions the array around it.
+                <span class="complexity avg">O(n log n) avg</span>
+            </p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="QuickSort.generate()">Generate Array</button>
+                <button class="btn btn-primary" onclick="QuickSort.sort()">▶ Sort</button>
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" min="10" max="500" value="100" id="quick-speed">
+                </div>
+            </div>
+            <div class="viz-area" id="quick-viz"></div>
+            <div class="status-bar" id="quick-status">Click "Generate Array" to start</div>
+        </div>
+    </div>
+
+    <!-- RADIX SORT -->
+    <div class="section" id="radix-sort">
+        <div class="page-header">
+            <h2>🔢 Radix Sort</h2>
+            <p>Sorts numbers digit by digit, from least significant to most significant.
+                <span class="complexity good">O(d·n)</span>
+            </p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="RadixSort.generate()">Generate Array</button>
+                <button class="btn btn-primary" onclick="RadixSort.sort()">▶ Sort</button>
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" min="10" max="500" value="150" id="radix-speed">
+                </div>
+            </div>
+            <div class="viz-area" id="radix-viz"></div>
+            <div class="status-bar" id="radix-status">Click "Generate Array" to start</div>
+        </div>
+    </div>
+
+    <!-- COUNTING SORT -->
+    <div class="section" id="counting-sort">
+        <div class="page-header">
+            <h2>🔢 Counting Sort</h2>
+            <p>Counts occurrences of each value and reconstructs the sorted array.
+                <span class="complexity good">O(n + k)</span>
+            </p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="CountingSort.generate()">Generate Array</button>
+                <button class="btn btn-primary" onclick="CountingSort.sort()">▶ Sort</button>
+                <div class="speed-control">
+                    <span>Speed:</span>
+                    <input type="range" min="10" max="500" value="150" id="counting-speed">
+                </div>
+            </div>
+            <div class="viz-area" id="counting-viz"></div>
+            <div class="info-box" id="counting-count-display" style="margin-top:15px;display:none;">
+                <strong>Count Array:</strong> <span id="counting-count-text"></span>
+            </div>
+            <div class="status-bar" id="counting-status">Click "Generate Array" to start</div>
+        </div>
+    </div>
+
+    <!-- STACK OPERATIONS -->
+    <div class="section" id="stack-ops">
+        <div class="page-header">
+            <h2>📚 Stack — Push & Pop</h2>
+            <p>LIFO data structure. Elements are added and removed from the top.
+                <span class="complexity good">O(1)</span>
+            </p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <input type="number" id="stack-input" placeholder="Value..." style="width:100px;">
+                <button class="btn btn-success" onclick="StackOps.push()">⬆ Push</button>
+                <button class="btn btn-danger" onclick="StackOps.pop()">⬇ Pop</button>
+                <button class="btn btn-secondary" onclick="StackOps.peek()">👁 Peek</button>
+                <button class="btn btn-secondary" onclick="StackOps.clear()">Clear</button>
+            </div>
+            <div class="viz-area center-items">
+                <div class="stack-container" id="stack-viz">
+                    <div class="stack-base"></div>
+                </div>
+            </div>
+            <div class="status-bar" id="stack-status">Stack is empty. Push some elements!</div>
+        </div>
+    </div>
+
+    <!-- POLISH NOTATION -->
+    <div class="section" id="polish-notation">
+        <div class="page-header">
+            <h2>📝 Polish Notation</h2>
+            <p>Convert infix expressions to postfix/prefix and evaluate using stack.</p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <input type="text" id="polish-input" placeholder="e.g. (A+B)*C" style="width:200px;" value="(A+B)*(C-D)">
+                <button class="btn btn-primary" onclick="Polish.toPostfix()">→ Postfix</button>
+                <button class="btn btn-secondary" onclick="Polish.toPrefix()">→ Prefix</button>
+            </div>
+            <div class="expression-display" id="polish-result">Enter an expression above</div>
+            <div class="card-title"><span class="icon">📚</span> Stack Trace</div>
+            <div class="viz-area center-items" style="min-height:80px;">
+                <div class="stack-container" id="polish-stack-viz" style="min-height:200px;">
+                    <div class="stack-base"></div>
+                </div>
+            </div>
+            <div class="status-bar" id="polish-status">Enter an infix expression and convert</div>
+        </div>
+        <div class="card">
+            <div class="card-title"><span class="icon">🧮</span> Evaluate Postfix Expression</div>
+            <div class="controls">
+                <input type="text" id="eval-input" placeholder="e.g. 3 4 + 2 *" style="width:200px;" value="3 4 + 2 *">
+                <button class="btn btn-primary" onclick="Polish.evaluate()">Evaluate</button>
+            </div>
+            <div class="expression-display" id="eval-result">—</div>
+            <div class="status-bar" id="eval-status">Enter a postfix expression with spaces between tokens</div>
+        </div>
+    </div>
+
+    <!-- SINGLY LINKED LIST -->
+    <div class="section" id="singly-ll">
+        <div class="page-header">
+            <h2>🔗 Singly Linked List</h2>
+            <p>Linear data structure where each element points to the next.</p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <input type="number" id="sll-value" placeholder="Value" style="width:80px;">
+                <input type="number" id="sll-pos" placeholder="Position" style="width:90px;">
+                <button class="btn btn-success" onclick="SLL.insertAt()">Insert At</button>
+                <button class="btn btn-success" onclick="SLL.insertHead()">Insert Head</button>
+                <button class="btn btn-success" onclick="SLL.insertTail()">Insert Tail</button>
+                <button class="btn btn-danger" onclick="SLL.deleteAt()">Delete At</button>
+                <button class="btn btn-danger" onclick="SLL.deleteHead()">Del Head</button>
+                <button class="btn btn-primary" onclick="SLL.searchVal()">🔍 Search</button>
+            </div>
+            <div class="viz-area center-items" style="min-height:80px; position:relative;">
+                <span class="ll-head-label" id="sll-head-label">HEAD</span>
+                <div class="ll-container" id="sll-viz">
+                    <div class="ll-null">NULL</div>
+                </div>
+            </div>
+            <div class="status-bar" id="sll-status">Linked list is empty. Insert some nodes!</div>
+        </div>
+    </div>
+
+    <!-- DOUBLY LINKED LIST -->
+    <div class="section" id="doubly-ll">
+        <div class="page-header">
+            <h2>🔗🔗 Doubly Linked List</h2>
+            <p>Each node has pointers to both the next and previous nodes.</p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <input type="number" id="dll-value" placeholder="Value" style="width:80px;">
+                <input type="number" id="dll-pos" placeholder="Position" style="width:90px;">
+                <button class="btn btn-success" onclick="DLL.insertHead()">Insert Head</button>
+                <button class="btn btn-success" onclick="DLL.insertTail()">Insert Tail</button>
+                <button class="btn btn-success" onclick="DLL.insertAt()">Insert At</button>
+                <button class="btn btn-danger" onclick="DLL.deleteHead()">Del Head</button>
+                <button class="btn btn-danger" onclick="DLL.deleteTail()">Del Tail</button>
+                <button class="btn btn-danger" onclick="DLL.deleteAt()">Del At</button>
+            </div>
+            <div class="viz-area center-items" style="min-height:80px; position:relative;">
+                <span class="ll-head-label">HEAD</span>
+                <div class="ll-container" id="dll-viz">
+                    <div class="ll-null">NULL</div>
+                </div>
+            </div>
+            <div class="status-bar" id="dll-status">Doubly linked list is empty. Insert some nodes!</div>
+        </div>
+    </div>
+
+    <!-- LINEAR QUEUE -->
+    <div class="section" id="queue-ops">
+        <div class="page-header">
+            <h2>📬 Linear Queue</h2>
+            <p>FIFO data structure. Elements are added at rear and removed from front.
+                <span class="complexity good">O(1)</span>
+            </p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <input type="number" id="queue-input" placeholder="Value..." style="width:100px;">
+                <button class="btn btn-success" onclick="QueueOps.enqueue()">Enqueue →</button>
+                <button class="btn btn-danger" onclick="QueueOps.dequeue()">← Dequeue</button>
+                <button class="btn btn-secondary" onclick="QueueOps.peekFront()">👁 Peek</button>
+                <button class="btn btn-secondary" onclick="QueueOps.clear()">Clear</button>
+            </div>
+            <div class="viz-area center-items" style="min-height:80px;">
+                <div class="queue-container" id="queue-viz" style="width:100%;">
+                    <div style="color:#636e72; font-size:14px;">Queue is empty</div>
+                </div>
+            </div>
+            <div class="queue-labels" id="queue-labels" style="display:none;">
+                <span class="queue-front-label">FRONT ↑</span>
+                <span class="queue-rear-label">↑ REAR</span>
+            </div>
+            <div class="status-bar" id="queue-status">Queue is empty. Enqueue some elements!</div>
+        </div>
+    </div>
+
+    <!-- CIRCULAR QUEUE -->
+    <div class="section" id="circular-queue">
+        <div class="page-header">
+            <h2>🔄 Circular Queue</h2>
+            <p>Queue where the last position connects back to the first position.</p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <input type="number" id="cq-input" placeholder="Value..." style="width:100px;">
+                <button class="btn btn-success" onclick="CQ.enqueue()">Enqueue</button>
+                <button class="btn btn-danger" onclick="CQ.dequeue()">Dequeue</button>
+                <button class="btn btn-secondary" onclick="CQ.clear()">Clear</button>
+                <span style="font-size:12px;color:#636e72;">Size: 8</span>
+            </div>
+            <div class="viz-area center-items" style="min-height:340px;">
+                <div class="circular-queue-viz" id="cq-viz"></div>
+            </div>
+            <div class="status-bar" id="cq-status">Circular queue initialized with size 8</div>
+        </div>
+    </div>
+
+    <!-- HASHING - CHAINING (OPEN HASHING) -->
+    <div class="section" id="hash-chaining">
+        <div class="page-header">
+            <h2>#️⃣ Chaining (Open Hashing)</h2>
+            <p>Each bucket stores a linked list of entries that hash to the same index.</p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <input type="number" id="hc-input" placeholder="Value..." style="width:100px;">
+                <button class="btn btn-success" onclick="HashChain.insert()">Insert</button>
+                <button class="btn btn-primary" onclick="HashChain.searchVal()">🔍 Search</button>
+                <button class="btn btn-danger" onclick="HashChain.deleteVal()">Delete</button>
+                <button class="btn btn-secondary" onclick="HashChain.clear()">Clear</button>
+                <span style="font-size:12px;color:#636e72;">h(k) = k mod 7</span>
+            </div>
+            <div class="viz-area center-items" style="align-items:flex-start; min-height:200px;">
+                <div class="hash-table" id="hc-viz"></div>
+            </div>
+            <div class="status-bar" id="hc-status">Hash table initialized with 7 buckets</div>
+        </div>
+    </div>
+
+    <!-- HASHING - OPEN ADDRESSING (CLOSED HASHING) -->
+    <div class="section" id="hash-open-addr">
+        <div class="page-header">
+            <h2>#️⃣ Open Addressing (Closed Hashing)</h2>
+            <p>All elements are stored in the hash table itself. On collision, probe for next slot.</p>
+        </div>
+        <div class="card">
+            <div class="controls">
+                <input type="number" id="hoa-input" placeholder="Value..." style="width:100px;">
+                <select id="hoa-method">
+                    <option value="linear">Linear Probing</option>
+                    <option value="quadratic">Quadratic Probing</option>
+                    <option value="double">Double Hashing</option>
+                </select>
+                <button class="btn btn-success" onclick="HOA.insert()">Insert</button>
+                <button class="btn btn-primary" onclick="HOA.searchVal()">🔍 Search</button>
+                <button class="btn btn-danger" onclick="HOA.deleteVal()">Delete</button>
+                <button class="btn btn-secondary" onclick="HOA.clear()">Clear</button>
+            </div>
+            <div class="info-box">
+                <strong>Linear:</strong> h(k,i) = (h(k) + i) mod m &nbsp;|&nbsp;
+                <strong>Quadratic:</strong> h(k,i) = (h(k) + i²) mod m &nbsp;|&nbsp;
+                <strong>Double:</strong> h(k,i) = (h₁(k) + i·h₂(k)) mod m
+            </div>
+            <div class="viz-area center-items" style="min-height:100px;">
+                <div class="oa-table" id="hoa-viz"></div>
+            </div>
+            <div class="status-bar" id="hoa-status">Hash table initialized with 11 slots. h(k) = k mod 11</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// =====================================================
+// UTILITY FUNCTIONS
+// =====================================================
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function randomArray(size, min, max) {
+    const arr = [];
+    for (let i = 0; i < size; i++) {
+        arr.push(Math.floor(Math.random() * (max - min + 1)) + min);
+    }
+    return arr;
+}
+
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+
+function renderBars(containerId, arr, states = {}) {
+    const container = document.getElementById(containerId);
+    const maxVal = Math.max(...arr, 1);
+    const maxHeight = 200;
+    let html = '';
+    arr.forEach((val, i) => {
+        let cls = '';
+        if (states.comparing && states.comparing.includes(i)) cls = 'comparing';
+        if (states.sorted && states.sorted.includes(i)) cls = 'sorted';
+        if (states.found && states.found.includes(i)) cls = 'found';
+        if (states.active && states.active.includes(i)) cls = 'active';
+        const h = Math.max((val / maxVal) * maxHeight, 20);
+        html += `<div class="bar ${cls}">
+            <div class="bar-visual" style="height:${h}px; width:${Math.max(35, Math.floor(500/arr.length))}px;"></div>
+            <div class="bar-label">${val}</div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+// =====================================================
+// LINEAR SEARCH
+// =====================================================
+const LS = {
+    arr: [],
+    running: false,
+    generate() {
+        this.arr = randomArray(15, 1, 99);
+        renderBars('ls-viz', this.arr);
+        document.getElementById('ls-status').innerHTML = 'Array generated: [' + this.arr.join(', ') + ']';
+    },
+    async search() {
+        if (this.running) return;
+        const target = parseInt(document.getElementById('ls-target').value);
+        if (isNaN(target)) { alert('Enter a search value'); return; }
+        if (this.arr.length === 0) { alert('Generate an array first'); return; }
+        this.running = true;
+        const speed = 850 - document.getElementById('ls-speed').value;
+        const status = document.getElementById('ls-status');
+        let found = -1;
+        for (let i = 0; i < this.arr.length; i++) {
+            renderBars('ls-viz', this.arr, { comparing: [i] });
+            status.innerHTML = `Checking index ${i}: ${this.arr[i]} ${this.arr[i] === target ? '== ' : '!= '}${target}`;
+            await sleep(speed);
+            if (this.arr[i] === target) {
+                found = i;
+                renderBars('ls-viz', this.arr, { found: [i] });
+                status.innerHTML = `✅ Found ${target} at index ${found}!`;
+                this.running = false;
+                return;
+            }
+        }
+        status.innerHTML = `❌ ${target} not found in the array.`;
+        renderBars('ls-viz', this.arr);
+        this.running = false;
+    }
+};
+
+// =====================================================
+// BINARY SEARCH
+// =====================================================
+const BS = {
+    arr: [],
+    running: false,
+    generate() {
+        this.arr = randomArray(15, 1, 99).sort((a, b) => a - b);
+        // Remove duplicates
+        this.arr = [...new Set(this.arr)];
+        renderBars('bs-viz', this.arr);
+        document.getElementById('bs-status').innerHTML = 'Sorted array: [' + this.arr.join(', ') + ']';
+    },
+    async search() {
+        if (this.running) return;
+        const target = parseInt(document.getElementById('bs-target').value);
+        if (isNaN(target)) { alert('Enter a search value'); return; }
+        if (this.arr.length === 0) { alert('Generate an array first'); return; }
+        this.running = true;
+        const speed = 850 - document.getElementById('bs-speed').value;
+        const status = document.getElementById('bs-status');
+        let lo = 0, hi = this.arr.length - 1;
+        while (lo <= hi) {
+            const mid = Math.floor((lo + hi) / 2);
+            const sorted = [];
+            for (let i = 0; i < this.arr.length; i++) {
+                if (i < lo || i > hi) sorted.push(i);
+            }
+            renderBars('bs-viz', this.arr, { comparing: [mid], sorted: sorted, active: [lo, hi] });
+            status.innerHTML = `lo=${lo}, hi=${hi}, mid=${mid} → arr[${mid}]=${this.arr[mid]} vs ${target}`;
+            await sleep(speed);
+            if (this.arr[mid] === target) {
+                renderBars('bs-viz', this.arr, { found: [mid], sorted: sorted });
+                status.innerHTML = `✅ Found ${target} at index ${mid}!`;
+                this.running = false;
+                return;
+            } else if (this.arr[mid] < target) {
+                lo = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        }
+        status.innerHTML = `❌ ${target} not found.`;
+        renderBars('bs-viz', this.arr);
+        this.running = false;
+    }
+};
+
+// =====================================================
+// SORTING HELPERS
+// =====================================================
+function createSorter(name, speedId, vizId, statusId) {
+    return {
+        arr: [],
+        running: false,
+        generate() {
+            this.arr = randomArray(20, 5, 100);
+            renderBars(vizId, this.arr);
+            document.getElementById(statusId).innerHTML = `Array generated with ${this.arr.length} elements.`;
+        },
+        getSpeed() { return 550 - parseInt(document.getElementById(speedId).value); }
+    };
+}
+
+// =====================================================
+// BUBBLE SORT
+// =====================================================
+const BubbleSort = {
+    ...createSorter('Bubble', 'bubble-speed', 'bubble-viz', 'bubble-status'),
+    async sort() {
+        if (this.running) return;
+        if (this.arr.length === 0) { alert('Generate an array first'); return; }
+        this.running = true;
+        const status = document.getElementById('bubble-status');
+        const n = this.arr.length;
+        const sorted = [];
+        for (let i = 0; i < n - 1; i++) {
+            let swapped = false;
+            for (let j = 0; j < n - i - 1; j++) {
+                renderBars('bubble-viz', this.arr, { comparing: [j, j + 1], sorted });
+                status.innerHTML = `Comparing ${this.arr[j]} and ${this.arr[j + 1]}`;
+                await sleep(this.getSpeed());
+                if (this.arr[j] > this.arr[j + 1]) {
+                    [this.arr[j], this.arr[j + 1]] = [this.arr[j + 1], this.arr[j]];
+                    swapped = true;
+                }
+            }
+            sorted.push(n - 1 - i);
+            if (!swapped) break;
+        }
+        sorted.push(0);
+        renderBars('bubble-viz', this.arr, { sorted: Array.from({ length: n }, (_, i) => i) });
+        status.innerHTML = '✅ Sorting complete!';
+        this.running = false;
+    }
+};
+
+// =====================================================
+// INSERTION SORT
+// =====================================================
+const InsertionSort = {
+    ...createSorter('Insertion', 'insertion-speed', 'insertion-viz', 'insertion-status'),
+    async sort() {
+        if (this.running) return;
+        if (this.arr.length === 0) { alert('Generate an array first'); return; }
+        this.running = true;
+        const status = document.getElementById('insertion-status');
+        const n = this.arr.length;
+        for (let i = 1; i < n; i++) {
+            const key = this.arr[i];
+            let j = i - 1;
+            renderBars('insertion-viz', this.arr, { active: [i], sorted: Array.from({ length: i }, (_, k) => k) });
+            status.innerHTML = `Inserting ${key} into sorted portion`;
+            await sleep(this.getSpeed());
+            while (j >= 0 && this.arr[j] > key) {
+                this.arr[j + 1] = this.arr[j];
+                renderBars('insertion-viz', this.arr, { comparing: [j, j + 1] });
+                status.innerHTML = `Moving ${this.arr[j]} right`;
+                await sleep(this.getSpeed());
+                j--;
+            }
+            this.arr[j + 1] = key;
+        }
+        renderBars('insertion-viz', this.arr, { sorted: Array.from({ length: n }, (_, i) => i) });
+        status.innerHTML = '✅ Sorting complete!';
+        this.running = false;
+    }
+};
+
+// =====================================================
+// SELECTION SORT
+// =====================================================
+const SelectionSort = {
+    ...createSorter('Selection', 'selection-speed', 'selection-viz', 'selection-status'),
+    async sort() {
+        if (this.running) return;
+        if (this.arr.length === 0) { alert('Generate an array first'); return; }
+        this.running = true;
+        const status = document.getElementById('selection-status');
+        const n = this.arr.length;
+        const sorted = [];
+        for (let i = 0; i < n - 1; i++) {
+            let minIdx = i;
+            for (let j = i + 1; j < n; j++) {
+                renderBars('selection-viz', this.arr, { comparing: [minIdx, j], sorted, active: [i] });
+                status.innerHTML = `Finding minimum: comparing ${this.arr[minIdx]} and ${this.arr[j]}`;
+                await sleep(this.getSpeed());
+                if (this.arr[j] < this.arr[minIdx]) {
+                    minIdx = j;
+                }
+            }
+            if (minIdx !== i) {
+                [this.arr[i], this.arr[minIdx]] = [this.arr[minIdx], this.arr[i]];
+            }
+            sorted.push(i);
+        }
+        sorted.push(n - 1);
+        renderBars('selection-viz', this.arr, { sorted });
+        status.innerHTML = '✅ Sorting complete!';
+        this.running = false;
+    }
+};
+
+// =====================================================
+// MERGE SORT
+// =====================================================
+const MergeSort = {
+    ...createSorter('Merge', 'merge-speed', 'merge-viz', 'merge-status'),
+    async sort() {
+        if (this.running) return;
+        if (this.arr.length === 0) { alert('Generate an array first'); return; }
+        this.running = true;
+        const status = document.getElementById('merge-status');
+        await this.mergeSort(0, this.arr.length - 1, status);
+        renderBars('merge-viz', this.arr, { sorted: Array.from({ length: this.arr.length }, (_, i) => i) });
+        status.innerHTML = '✅ Sorting complete!';
+        this.running = false;
+    },
+    async mergeSort(l, r, status) {
+        if (l >= r) return;
+        const m = Math.floor((l + r) / 2);
+        await this.mergeSort(l, m, status);
+        await this.mergeSort(m + 1, r, status);
+        await this.merge(l, m, r, status);
+    },
+    async merge(l, m, r, status) {
+        const left = this.arr.slice(l, m + 1);
+        const right = this.arr.slice(m + 1, r + 1);
+        let i = 0, j = 0, k = l;
+        while (i < left.length && j < right.length) {
+            renderBars('merge-viz', this.arr, { comparing: [l + i, m + 1 + j], active: Array.from({ length: r - l + 1 }, (_, idx) => l + idx) });
+            status.innerHTML = `Merging: comparing ${left[i]} and ${right[j]}`;
+            await sleep(this.getSpeed());
+            if (left[i] <= right[j]) {
+                this.arr[k++] = left[i++];
+            } else {
+                this.arr[k++] = right[j++];
+            }
+        }
+        while (i < left.length) this.arr[k++] = left[i++];
+        while (j < right.length) this.arr[k++] = right[j++];
+        renderBars('merge-viz', this.arr, { active: Array.from({ length: r - l + 1 }, (_, idx) => l + idx) });
+        await sleep(this.getSpeed());
+    }
+};
+
+// =====================================================
+// QUICK SORT
+// =====================================================
+const QuickSort = {
+    ...createSorter('Quick', 'quick-speed', 'quick-viz', 'quick-status'),
+    async sort() {
+        if (this.running) return;
+        if (this.arr.length === 0) { alert('Generate an array first'); return; }
+        this.running = true;
+        const status = document.getElementById('quick-status');
+        const sorted = [];
+        await this.quickSort(0, this.arr.length - 1, status, sorted);
+        renderBars('quick-viz', this.arr, { sorted: Array.from({ length: this.arr.length }, (_, i) => i) });
+        status.innerHTML = '✅ Sorting complete!';
+        this.running = false;
+    },
+    async quickSort(lo, hi, status, sorted) {
+        if (lo < hi) {
+            const p = await this.partition(lo, hi, status, sorted);
+            sorted.push(p);
+            await this.quickSort(lo, p - 1, status, sorted);
+            await this.quickSort(p + 1, hi, status, sorted);
+        } else if (lo === hi) {
+            sorted.push(lo);
+        }
+    },
+    async partition(lo, hi, status, sorted) {
+        const pivot = this.arr[hi];
+        let i = lo - 1;
+        for (let j = lo; j < hi; j++) {
+            renderBars('quick-viz', this.arr, { comparing: [j, hi], active: [hi], sorted });
+            status.innerHTML = `Pivot: ${pivot} | Comparing ${this.arr[j]} with pivot`;
+            await sleep(this.getSpeed());
+            if (this.arr[j] < pivot) {
+                i++;
+                [this.arr[i], this.arr[j]] = [this.arr[j], this.arr[i]];
+            }
+        }
+        [this.arr[i + 1], this.arr[hi]] = [this.arr[hi], this.arr[i + 1]];
+        return i + 1;
+    }
+};
+
+// =====================================================
+// RADIX SORT
+// =====================================================
+const RadixSort = {
+    ...createSorter('Radix', 'radix-speed', 'radix-viz', 'radix-status'),
+    generate() {
+        this.arr = randomArray(16, 1, 999);
+        renderBars('radix-viz', this.arr);
+        document.getElementById('radix-status').innerHTML = `Array generated with ${this.arr.length} elements.`;
+    },
+    async sort() {
+        if (this.running) return;
+        if (this.arr.length === 0) { alert('Generate an array first'); return; }
+        this.running = true;
+        const status = document.getElementById('radix-status');
+        const max = Math.max(...this.arr);
+        let exp = 1;
+        while (Math.floor(max / exp) > 0) {
+            status.innerHTML = `Sorting by ${exp === 1 ? 'ones' : exp === 10 ? 'tens' : 'hundreds'} digit...`;
+            await this.countingSortByDigit(exp, status);
+            exp *= 10;
+        }
+        renderBars('radix-viz', this.arr, { sorted: Array.from({ length: this.arr.length }, (_, i) => i) });
+        status.innerHTML = '✅ Sorting complete!';
+        this.running = false;
+    },
+    async countingSortByDigit(exp, status) {
+        const n = this.arr.length;
+        const output = new Array(n);
+        const count = new Array(10).fill(0);
+        for (let i = 0; i < n; i++) {
+            const digit = Math.floor(this.arr[i] / exp) % 10;
+            count[digit]++;
+            renderBars('radix-viz', this.arr, { active: [i] });
+            await sleep(this.getSpeed() / 3);
+        }
+        for (let i = 1; i < 10; i++) count[i] += count[i - 1];
+        for (let i = n - 1; i >= 0; i--) {
+            const digit = Math.floor(this.arr[i] / exp) % 10;
+            output[count[digit] - 1] = this.arr[i];
+            count[digit]--;
+        }
+        for (let i = 0; i < n; i++) {
+            this.arr[i] = output[i];
+            renderBars('radix-viz', this.arr, { comparing: [i] });
+            await sleep(this.getSpeed() / 3);
+        }
+    }
+};
+
+// =====================================================
+// COUNTING SORT
+// =====================================================
+const CountingSort = {
+    ...createSorter('Counting', 'counting-speed', 'counting-viz', 'counting-status'),
+    generate() {
+        this.arr = randomArray(18, 1, 20);
+        renderBars('counting-viz', this.arr);
+        document.getElementById('counting-status').innerHTML = `Array generated (values 1-20).`;
+        document.getElementById('counting-count-display').style.display = 'none';
+    },
+    async sort() {
+        if (this.running) return;
+        if (this.arr.length === 0) { alert('Generate an array first'); return; }
+        this.running = true;
+        const status = document.getElementById('counting-status');
+        const countDisplay = document.getElementById('counting-count-display');
+        const countText = document.getElementById('counting-count-text');
+        countDisplay.style.display = 'block';
+
+        const max = Math.max(...this.arr);
+        const count = new Array(max + 1).fill(0);
+
+        // Count occurrences
+        for (let i = 0; i < this.arr.length; i++) {
+            count[this.arr[i]]++;
+            renderBars('counting-viz', this.arr, { active: [i] });
+            countText.innerHTML = count.map((c, idx) => idx > 0 ? `[${idx}]:${c}` : '').filter(Boolean).join(' ');
+            status.innerHTML = `Counting: arr[${i}]=${this.arr[i]}`;
+            await sleep(this.getSpeed() / 2);
+        }
+
+        // Reconstruct
+        let idx = 0;
+        for (let i = 0; i <= max; i++) {
+            while (count[i] > 0) {
+                this.arr[idx] = i;
+                count[i]--;
+                renderBars('counting-viz', this.arr, { sorted: Array.from({ length: idx + 1 }, (_, k) => k) });
+                status.innerHTML = `Placing ${i} at index ${idx}`;
+                await sleep(this.getSpeed() / 2);
+                idx++;
+            }
+        }
+
+        renderBars('counting-viz', this.arr, { sorted: Array.from({ length: this.arr.length }, (_, i) => i) });
+        status.innerHTML = '✅ Sorting complete!';
+        this.running = false;
+    }
+};
+
+// =====================================================
+// STACK OPERATIONS
+// =====================================================
+const StackOps = {
+    stack: [],
+    render() {
+        const viz = document.getElementById('stack-viz');
+        let html = '<div class="stack-base"></div>';
+        this.stack.forEach((val, i) => {
+            html += `<div class="stack-item">${val}</div>`;
+        });
+        viz.innerHTML = html;
+    },
+    push() {
+        const val = document.getElementById('stack-input').value;
+        if (val === '') { alert('Enter a value'); return; }
+        if (this.stack.length >= 10) {
+            document.getElementById('stack-status').innerHTML = '❌ Stack Overflow! (max 10)';
+            return;
+        }
+        this.stack.push(parseInt(val));
+        this.render();
+        document.getElementById('stack-input').value = '';
+        document.getElementById('stack-status').innerHTML = `Pushed ${val}. Stack size: ${this.stack.length}`;
+    },
+    pop() {
+        if (this.stack.length === 0) {
+            document.getElementById('stack-status').innerHTML = '❌ Stack Underflow! Stack is empty.';
+            return;
+        }
+        const val = this.stack.pop();
+        this.render();
+        document.getElementById('stack-status').innerHTML = `Popped ${val}. Stack size: ${this.stack.length}`;
+    },
+    peek() {
+        if (this.stack.length === 0) {
+            document.getElementById('stack-status').innerHTML = 'Stack is empty.';
+            return;
+        }
+        document.getElementById('stack-status').innerHTML = `Top element: ${this.stack[this.stack.length - 1]}`;
+    },
+    clear() {
+        this.stack = [];
+        this.render();
+        document.getElementById('stack-status').innerHTML = 'Stack cleared.';
+    }
+};
+
+// =====================================================
+// POLISH NOTATION
+// =====================================================
+const Polish = {
+    precedence(op) {
+        if (op === '+' || op === '-') return 1;
+        if (op === '*' || op === '/') return 2;
+        if (op === '^') return 3;
+        return 0;
+    },
+    isOperand(ch) {
+        return /[A-Za-z0-9]/.test(ch);
+    },
+    async toPostfix() {
+        const expr = document.getElementById('polish-input').value.trim();
+        if (!expr) return;
+        const status = document.getElementById('polish-status');
+        const result = document.getElementById('polish-result');
+        const stackViz = document.getElementById('polish-stack-viz');
+        const stack = [];
+        let output = '';
+        let logs = [];
+
+        for (let i = 0; i < expr.length; i++) {
+            const ch = expr[i];
+            if (ch === ' ') continue;
+
+            if (this.isOperand(ch)) {
+                output += ch;
+                logs.push(`'${ch}' is operand → add to output`);
+            } else if (ch === '(') {
+                stack.push(ch);
+                logs.push(`'(' → push to stack`);
+            } else if (ch === ')') {
+                while (stack.length && stack[stack.length - 1] !== '(') {
+                    output += stack.pop();
+                }
+                stack.pop(); // remove '('
+                logs.push(`')' → pop until '('`);
+            } else {
+                while (stack.length && this.precedence(stack[stack.length - 1]) >= this.precedence(ch)) {
+                    output += stack.pop();
+                }
+                stack.push(ch);
+                logs.push(`'${ch}' operator → push (pop higher precedence first)`);
+            }
+
+            // Render stack
+            let stackHtml = '<div class="stack-base"></div>';
+            stack.forEach(s => {
+                stackHtml += `<div class="stack-item">${s}</div>`;
+            });
+            stackViz.innerHTML = stackHtml;
+
+            result.innerHTML = output.split('').map((c, idx) => `<span>${c}</span>`).join(' ');
+            await sleep(400);
+        }
+
+        while (stack.length) {
+            output += stack.pop();
+        }
+
+        result.innerHTML = `<strong>Postfix:</strong> ${output.split('').join(' ')}`;
+        stackViz.innerHTML = '<div class="stack-base"></div>';
+        status.innerHTML = logs.map(l => `<div class="log-entry">${l}</div>`).join('');
+    },
+
+    async toPrefix() {
+        const expr = document.getElementById('polish-input').value.trim();
+        if (!expr) return;
+        // Reverse, swap brackets, get postfix, reverse
+        let rev = expr.split('').reverse().map(ch => {
+            if (ch === '(') return ')';
+            if (ch === ')') return '(';
+            return ch;
+        }).join('');
+
+        const stack = [];
+        let output = '';
+        for (let ch of rev) {
+            if (ch === ' ') continue;
+            if (this.isOperand(ch)) {
+                output += ch;
+            } else if (ch === '(') {
+                stack.push(ch);
+            } else if (ch === ')') {
+                while (stack.length && stack[stack.length - 1] !== '(') {
+                    output += stack.pop();
+                }
+                stack.pop();
+            } else {
+                while (stack.length && this.precedence(stack[stack.length - 1]) > this.precedence(ch)) {
+                    output += stack.pop();
+                }
+                stack.push(ch);
+            }
+        }
+        while (stack.length) output += stack.pop();
+        const prefix = output.split('').reverse().join('');
+        document.getElementById('polish-result').innerHTML = `<strong>Prefix:</strong> ${prefix.split('').join(' ')}`;
+        document.getElementById('polish-status').innerHTML = `Converted to prefix notation`;
+        document.getElementById('polish-stack-viz').innerHTML = '<div class="stack-base"></div>';
+    },
+
+    async evaluate() {
+        const expr = document.getElementById('eval-input').value.trim();
+        if (!expr) return;
+        const tokens = expr.split(/\s+/);
+        const stack = [];
+        const status = document.getElementById('eval-status');
+        const result = document.getElementById('eval-result');
+        let logs = [];
+
+        for (const token of tokens) {
+            if (!isNaN(token)) {
+                stack.push(parseFloat(token));
+                logs.push(`Push ${token} → Stack: [${stack.join(', ')}]`);
+            } else {
+                const b = stack.pop();
+                const a = stack.pop();
+                let res;
+                switch (token) {
+                    case '+': res = a + b; break;
+                    case '-': res = a - b; break;
+                    case '*': res = a * b; break;
+                    case '/': res = a / b; break;
+                    case '^': res = Math.pow(a, b); break;
+                }
+                stack.push(res);
+                logs.push(`${a} ${token} ${b} = ${res} → Stack: [${stack.join(', ')}]`);
+            }
+            await sleep(300);
+            result.innerHTML = `Stack: [ ${stack.join(', ')} ]`;
+        }
+
+        result.innerHTML = `<strong>Result: ${stack[0]}</strong>`;
+        status.innerHTML = logs.map(l => `<div class="log-entry">${l}</div>`).join('');
+    }
+};
+
+// =====================================================
+// SINGLY LINKED LIST
+// =====================================================
+const SLL = {
+    list: [],
+    render(highlightIdx = -1) {
+        const viz = document.getElementById('sll-viz');
+        if (this.list.length === 0) {
+            viz.innerHTML = '<div class="ll-null">NULL</div>';
+            return;
+        }
+        let html = '';
+        this.list.forEach((val, i) => {
+            html += `<div class="ll-node ${i === highlightIdx ? 'highlight' : ''}">
+                <div class="ll-node-box">
+                    <div class="ll-node-data">${val}</div>
+                    <div class="ll-node-ptr">●</div>
+                </div>
+            </div>`;
+            if (i < this.list.length - 1) {
+                html += '<div class="ll-arrow"></div>';
+            }
+        });
+        html += '<div class="ll-arrow"></div><div class="ll-null">NULL</div>';
+        viz.innerHTML = html;
+    },
+    insertHead() {
+        const val = document.getElementById('sll-value').value;
+        if (val === '') return alert('Enter a value');
+        this.list.unshift(parseInt(val));
+        this.render(0);
+        document.getElementById('sll-status').innerHTML = `Inserted ${val} at head. Size: ${this.list.length}`;
+    },
+    insertTail() {
+        const val = document.getElementById('sll-value').value;
+        if (val === '') return alert('Enter a value');
+        this.list.push(parseInt(val));
+        this.render(this.list.length - 1);
+        document.getElementById('sll-status').innerHTML = `Inserted ${val} at tail. Size: ${this.list.length}`;
+    },
+    insertAt() {
+        const val = document.getElementById('sll-value').value;
+        const pos = parseInt(document.getElementById('sll-pos').value);
+        if (val === '' || isNaN(pos)) return alert('Enter value and position');
+        if (pos < 0 || pos > this.list.length) return alert('Invalid position');
+        this.list.splice(pos, 0, parseInt(val));
+        this.render(pos);
+        document.getElementById('sll-status').innerHTML = `Inserted ${val} at position ${pos}. Size: ${this.list.length}`;
+    },
+    deleteHead() {
+        if (this.list.length === 0) return alert('List is empty');
+        const val = this.list.shift();
+        this.render();
+        document.getElementById('sll-status').innerHTML = `Deleted ${val} from head. Size: ${this.list.length}`;
+    },
+    deleteAt() {
+        const pos = parseInt(document.getElementById('sll-pos').value);
+        if (isNaN(pos) || pos < 0 || pos >= this.list.length) return alert('Invalid position');
+        const val = this.list.splice(pos, 1)[0];
+        this.render();
+        document.getElementById('sll-status').innerHTML = `Deleted ${val} at position ${pos}. Size: ${this.list.length}`;
+    },
+    async searchVal() {
+        const val = parseInt(document.getElementById('sll-value').value);
+        if (isNaN(val)) return alert('Enter a value to search');
+        const status = document.getElementById('sll-status');
+        for (let i = 0; i < this.list.length; i++) {
+            this.render(i);
+            status.innerHTML = `Searching... checking index ${i}: ${this.list[i]}`;
+            await sleep(400);
+            if (this.list[i] === val) {
+                this.render(i);
+                status.innerHTML = `✅ Found ${val} at index ${i}!`;
+                return;
+            }
+        }
+        this.render();
+        status.innerHTML = `❌ ${val} not found in the list.`;
+    }
+};
+
+// =====================================================
+// DOUBLY LINKED LIST
+// =====================================================
+const DLL = {
+    list: [],
+    render(highlightIdx = -1) {
+        const viz = document.getElementById('dll-viz');
+        if (this.list.length === 0) {
+            viz.innerHTML = '<div class="ll-null">NULL</div>';
+            return;
+        }
+        let html = '<div class="ll-null" style="margin-right:5px;">NULL</div>';
+        html += '<div class="ll-arrow" style="transform:scaleX(-1);"></div>';
+        this.list.forEach((val, i) => {
+            html += `<div class="ll-node ${i === highlightIdx ? 'highlight' : ''}">
+                <div class="dll-node-box">
+                    <div class="dll-node-prev">◄</div>
+                    <div class="dll-node-data">${val}</div>
+                    <div class="dll-node-next">►</div>
+                </div>
+            </div>`;
+            if (i < this.list.length - 1) {
+                html += '<div class="dll-arrow"><div class="dll-arrow-fwd"></div><div class="dll-arrow-bwd"></div></div>';
+            }
+        });
+        html += '<div class="ll-arrow"></div><div class="ll-null">NULL</div>';
+        viz.innerHTML = html;
+    },
+    insertHead() {
+        const val = document.getElementById('dll-value').value;
+        if (val === '') return alert('Enter a value');
+        this.list.unshift(parseInt(val));
+        this.render(0);
+        document.getElementById('dll-status').innerHTML = `Inserted ${val} at head.`;
+    },
+    insertTail() {
+        const val = document.getElementById('dll-value').value;
+        if (val === '') return alert('Enter a value');
+        this.list.push(parseInt(val));
+        this.render(this.list.length - 1);
+        document.getElementById('dll-status').innerHTML = `Inserted ${val} at tail.`;
+    },
+    insertAt() {
+        const val = document.getElementById('dll-value').value;
+        const pos = parseInt(document.getElementById('dll-pos').value);
+        if (val === '' || isNaN(pos)) return alert('Enter value and position');
+        if (pos < 0 || pos > this.list.length) return alert('Invalid position');
+        this.list.splice(pos, 0, parseInt(val));
+        this.render(pos);
+        document.getElementById('dll-status').innerHTML = `Inserted ${val} at position ${pos}.`;
+    },
+    deleteHead() {
+        if (this.list.length === 0) return alert('List is empty');
+        const val = this.list.shift();
+        this.render();
+        document.getElementById('dll-status').innerHTML = `Deleted ${val} from head.`;
+    },
+    deleteTail() {
+        if (this.list.length === 0) return alert('List is empty');
+        const val = this.list.pop();
+        this.render();
+        document.getElementById('dll-status').innerHTML = `Deleted ${val} from tail.`;
+    },
+    deleteAt() {
+        const pos = parseInt(document.getElementById('dll-pos').value);
+        if (isNaN(pos) || pos < 0 || pos >= this.list.length) return alert('Invalid position');
+        const val = this.list.splice(pos, 1)[0];
+        this.render();
+        document.getElementById('dll-status').innerHTML = `Deleted ${val} at position ${pos}.`;
+    }
+};
+
+// =====================================================
+// LINEAR QUEUE
+// =====================================================
+const QueueOps = {
+    queue: [],
+    render() {
+        const viz = document.getElementById('queue-viz');
+        const labels = document.getElementById('queue-labels');
+        if (this.queue.length === 0) {
+            viz.innerHTML = '<div style="color:#636e72; font-size:14px;">Queue is empty</div>';
+            labels.style.display = 'none';
+            return;
+        }
+        labels.style.display = 'flex';
+        let html = '';
+        this.queue.forEach((val, i) => {
+            html += `<div class="queue-item">${val}</div>`;
+        });
+        viz.innerHTML = html;
+    },
+    enqueue() {
+        const val = document.getElementById('queue-input').value;
+        if (val === '') return alert('Enter a value');
+        if (this.queue.length >= 12) {
+            document.getElementById('queue-status').innerHTML = '❌ Queue is full! (max 12)';
+            return;
+        }
+        this.queue.push(parseInt(val));
+        this.render();
+        document.getElementById('queue-input').value = '';
+        document.getElementById('queue-status').innerHTML = `Enqueued ${val}. Size: ${this.queue.length}`;
+    },
+    dequeue() {
+        if (this.queue.length === 0) {
+            document.getElementById('queue-status').innerHTML = '❌ Queue is empty!';
+            return;
+        }
+        const val = this.queue.shift();
+        this.render();
+        document.getElementById('queue-status').innerHTML = `Dequeued ${val}. Size: ${this.queue.length}`;
+    },
+    peekFront() {
+        if (this.queue.length === 0) {
+            document.getElementById('queue-status').innerHTML = 'Queue is empty.';
+            return;
+        }
+        document.getElementById('queue-status').innerHTML = `Front element: ${this.queue[0]}`;
+    },
+    clear() {
+        this.queue = [];
+        this.render();
+        document.getElementById('queue-status').innerHTML = 'Queue cleared.';
+    }
+};
+
+// =====================================================
+// CIRCULAR QUEUE
+// =====================================================
+const CQ = {
+    size: 8,
+    data: new Array(8).fill(null),
+    front: -1,
+    rear: -1,
+    count: 0,
+
+    init() {
+        this.render();
+    },
+
+    render() {
+        const viz = document.getElementById('cq-viz');
+        const cx = 150, cy = 150, r = 110;
+        let html = '';
+        for (let i = 0; i < this.size; i++) {
+            const angle = (i / this.size) * 2 * Math.PI - Math.PI / 2;
+            const x = cx + r * Math.cos(angle) - 24;
+            const y = cy + r * Math.sin(angle) - 24;
+            const labelX = cx + (r + 30) * Math.cos(angle) - 5;
+            const labelY = cy + (r + 30) * Math.sin(angle) - 5;
+
+            let cls = '';
+            if (this.data[i] !== null) cls += ' filled';
+            if (this.count > 0 && i === this.front) cls += ' front';
+            if (this.count > 0 && i === this.rear) cls += ' rear';
+
+            html += `<div class="cq-slot${cls}" style="left:${x}px;top:${y}px;">
+                ${this.data[i] !== null ? this.data[i] : ''}
+            </div>`;
+            html += `<div class="cq-index" style="left:${labelX}px;top:${labelY}px;">${i}${this.count > 0 && i === this.front ? '<br><span style="color:#00b894;font-weight:700;">F</span>' : ''}${this.count > 0 && i === this.rear ? '<br><span style="color:#fd79a8;font-weight:700;">R</span>' : ''}</div>`;
+        }
+        viz.innerHTML = html;
+    },
+
+    enqueue() {
+        const val = document.getElementById('cq-input').value;
+        if (val === '') return alert('Enter a value');
+        if (this.count === this.size) {
+            document.getElementById('cq-status').innerHTML = '❌ Queue is full!';
+            return;
+        }
+        if (this.count === 0) {
+            this.front = 0;
+            this.rear = 0;
+        } else {
+            this.rear = (this.rear + 1) % this.size;
+        }
+        this.data[this.rear] = parseInt(val);
+        this.count++;
+        this.render();
+        document.getElementById('cq-input').value = '';
+        document.getElementById('cq-status').innerHTML = `Enqueued ${val} at index ${this.rear}. Count: ${this.count}. Front=${this.front}, Rear=${this.rear}`;
+    },
+
+    dequeue() {
+        if (this.count === 0) {
+            document.getElementById('cq-status').innerHTML = '❌ Queue is empty!';
+            return;
+        }
+        const val = this.data[this.front];
+        this.data[this.front] = null;
+        this.count--;
+        if (this.count === 0) {
+            this.front = -1;
+            this.rear = -1;
+        } else {
+            this.front = (this.front + 1) % this.size;
+        }
+        this.render();
+        document.getElementById('cq-status').innerHTML = `Dequeued ${val}. Count: ${this.count}. Front=${this.front}, Rear=${this.rear}`;
+    },
+
+    clear() {
+        this.data = new Array(this.size).fill(null);
+        this.front = -1;
+        this.rear = -1;
+        this.count = 0;
+        this.render();
+        document.getElementById('cq-status').innerHTML = 'Circular queue cleared.';
+    }
+};
+
+// =====================================================
+// HASH TABLE - CHAINING (OPEN HASHING)
+// =====================================================
+const HashChain = {
+    size: 7,
+    table: [],
+
+    init() {
+        this.table = Array.from({ length: this.size }, () => []);
+        this.render();
+    },
+
+    hash(key) {
+        return key % this.size;
+    },
+
+    render(highlightBucket = -1, highlightVal = null) {
+        const viz = document.getElementById('hc-viz');
+        let html = '';
+        this.table.forEach((bucket, i) => {
+            html += `<div class="hash-row">
+                <div class="hash-index" style="${i === highlightBucket ? 'border-color:var(--accent);background:rgba(253,121,168,0.15);' : ''}">${i}</div>`;
+            if (bucket.length === 0) {
+                html += '<div class="hash-arrow"></div><div class="hash-empty">Empty</div>';
+            } else {
+                html += '<div class="hash-arrow"></div>';
+                html += '<div class="hash-chain">';
+                bucket.forEach((val, j) => {
+                    const isHighlight = highlightVal === val && i === highlightBucket;
+                    html += `<div class="hash-value" style="${isHighlight ? 'border-color:var(--accent);background:rgba(253,121,168,0.2);' : ''}">${val}</div>`;
+                    if (j < bucket.length - 1) {
+                        html += '<div class="hash-arrow"></div>';
+                    }
+                });
+                html += '</div>';
+            }
+            html += '</div>';
+        });
+        viz.innerHTML = html;
+    },
+
+    insert() {
+        const val = parseInt(document.getElementById('hc-input').value);
+        if (isNaN(val)) return alert('Enter a value');
+        const idx = this.hash(val);
+        if (!this.table[idx].includes(val)) {
+            this.table[idx].push(val);
+        }
+        this.render(idx, val);
+        document.getElementById('hc-input').value = '';
+        document.getElementById('hc-status').innerHTML = `Inserted ${val} at bucket ${idx}. h(${val}) = ${val} mod ${this.size} = ${idx}`;
+    },
+
+    searchVal() {
+        const val = parseInt(document.getElementById('hc-input').value);
+        if (isNaN(val)) return alert('Enter a value');
+        const idx = this.hash(val);
+        const found = this.table[idx].includes(val);
+        this.render(idx, found ? val : null);
+        document.getElementById('hc-status').innerHTML = found
+            ? `✅ Found ${val} in bucket ${idx}!`
+            : `❌ ${val} not found. Checked bucket ${idx}.`;
+    },
+
+    deleteVal() {
+        const val = parseInt(document.getElementById('hc-input').value);
+        if (isNaN(val)) return alert('Enter a value');
+        const idx = this.hash(val);
+        const pos = this.table[idx].indexOf(val);
+        if (pos !== -1) {
+            this.table[idx].splice(pos, 1);
+            this.render(idx);
+            document.getElementById('hc-status').innerHTML = `Deleted ${val} from bucket ${idx}.`;
+        } else {
+            this.render(idx);
+            document.getElementById('hc-status').innerHTML = `❌ ${val} not found in bucket ${idx}.`;
+        }
+    },
+
+    clear() {
+        this.init();
+        document.getElementById('hc-status').innerHTML = 'Hash table cleared.';
+    }
+};
+
+// =====================================================
+// HASH TABLE - OPEN ADDRESSING (CLOSED HASHING)
+// =====================================================
+const HOA = {
+    size: 11,
+    table: [],
+    DELETED: Symbol('DELETED'),
+
+    init() {
+        this.table = new Array(this.size).fill(null);
+        this.render();
+    },
+
+    hash(key) {
+        return key % this.size;
+    },
+
+    hash2(key) {
+        return 7 - (key % 7);
+    },
+
+    probe(key, i, method) {
+        const h = this.hash(key);
+        switch (method) {
+            case 'linear': return (h + i) % this.size;
+            case 'quadratic': return (h + i * i) % this.size;
+            case 'double': return (h + i * this.hash2(key)) % this.size;
+        }
+    },
+
+    render(highlights = {}) {
+        const viz = document.getElementById('hoa-viz');
+        let html = '';
+        this.table.forEach((val, i) => {
+            let cls = '';
+            if (val !== null && val !== this.DELETED) cls = 'filled';
+            if (highlights.probing && highlights.probing.includes(i)) cls += ' probing';
+            if (highlights.inserted === i) cls = 'inserted';
+            html += `<div class="oa-slot ${cls}">
+                <div class="oa-slot-index">[${i}]</div>
+                <div class="oa-slot-value">${val === null ? '' : val === this.DELETED ? '🗑' : val}</div>
+            </div>`;
+        });
+        viz.innerHTML = html;
+    },
+
+    async insert() {
+        const val = parseInt(document.getElementById('hoa-input').value);
+        if (isNaN(val)) return alert('Enter a value');
+        const method = document.getElementById('hoa-method').value;
+        const status = document.getElementById('hoa-status');
+        const probed = [];
+
+        for (let i = 0; i < this.size; i++) {
+            const idx = this.probe(val, i, method);
+            probed.push(idx);
+            this.render({ probing: probed });
+            status.innerHTML = `Probing index ${idx}...`;
+            await sleep(300);
+
+            if (this.table[idx] === null || this.table[idx] === this.DELETED) {
+                this.table[idx] = val;
+                this.render({ inserted: idx });
+                document.getElementById('hoa-input').value = '';
+                status.innerHTML = `✅ Inserted ${val} at index ${idx}. Probes: ${probed.join(' → ')}`;
+                return;
+            }
+        }
+        status.innerHTML = '❌ Hash table is full!';
+    },
+
+    async searchVal() {
+        const val = parseInt(document.getElementById('hoa-input').value);
+        if (isNaN(val)) return alert('Enter a value');
+        const method = document.getElementById('hoa-method').value;
+        const status = document.getElementById('hoa-status');
+        const probed = [];
+
+        for (let i = 0; i < this.size; i++) {
+            const idx = this.probe(val, i, method);
+            probed.push(idx);
+            this.render({ probing: probed });
+            status.innerHTML = `Searching... probing index ${idx}`;
+            await sleep(300);
+
+            if (this.table[idx] === null) {
+                this.render({ probing: probed });
+                status.innerHTML = `❌ ${val} not found. Checked: ${probed.join(' → ')}`;
+                return;
+            }
+            if (this.table[idx] === val) {
+                this.render({ inserted: idx });
+                status.innerHTML = `✅ Found ${val} at index ${idx}! Probes: ${probed.join(' → ')}`;
+                return;
+            }
+        }
+        status.innerHTML = `❌ ${val} not found.`;
+    },
+
+    async deleteVal() {
+        const val = parseInt(document.getElementById('hoa-input').value);
+        if (isNaN(val)) return alert('Enter a value');
+        const method = document.getElementById('hoa-method').value;
+        const status = document.getElementById('hoa-status');
+
+        for (let i = 0; i < this.size; i++) {
+            const idx = this.probe(val, i, method);
+            if (this.table[idx] === null) {
+                status.innerHTML = `❌ ${val} not found.`;
+                return;
+            }
+            if (this.table[idx] === val) {
+                this.table[idx] = this.DELETED;
+                this.render();
+                status.innerHTML = `Deleted ${val} from index ${idx} (marked as deleted).`;
+                return;
+            }
+        }
+        status.innerHTML = `❌ ${val} not found.`;
+    },
+
+    clear() {
+        this.init();
+        document.getElementById('hoa-status').innerHTML = 'Hash table cleared.';
+    }
+};
+
+// =====================================================
+// INITIALIZATION
+// =====================================================
+window.addEventListener('DOMContentLoaded', () => {
+    LS.generate();
+    CQ.init();
+    HashChain.init();
+    HOA.init();
+});
+</script>
+
+</body>
+</html>
